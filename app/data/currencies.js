@@ -29,7 +29,6 @@ export default [
     'SGD',
     'THB',
     'TRY',
-    'TWD',
     'USD',
     'ZAR',
   ];
