@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { StatusBar, KeyboardAvoidingView } from 'react-native';
+import connectAlert from '../components/Alert/connectAlert';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
@@ -22,10 +23,18 @@ class Home extends Component {
         conversionRate: PropTypes.number,
         isFetching: PropTypes.bool,
         lastConvertedDate: PropTypes.object,
+        alertWithType: PropTypes.func,
+        currencyError: PropTypes.string,
     }
 
     componentWillMount() {
         this.props.dispatch(getInitialConversion());
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.currencyError && nextProps.currencyError !== this.props.currencyError) {
+            this.props.alertWithType('error', 'Error', nextProps.currencyError)
+        }
     }
 
     handlePressBaseCurrency = () => {
@@ -99,7 +108,8 @@ const mapStateToProps = (state) => {
         conversionRate: rates[quoteCurrency] || 0,
         isFetching: conversionSelector.isFetching,
         lastConvertedDate: conversionSelector.date ? new Date(conversionSelector.date) : new Date(),
+        currencyError: state.currencies.error,
     };
 };
 
-export default connect(mapStateToProps)(Home);
+export default connect(mapStateToProps)(connectAlert(Home));
